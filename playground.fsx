@@ -39,7 +39,8 @@ open ARCTokenization.StructuralOntology
 open System.IO
 
 // Input:
-let arcDir = Directory.GetCurrentDirectory()
+//let arcDir = Directory.GetCurrentDirectory()
+let arcDir = @"C:\Repos\nfdi4plants\arc-validation-packages\tests\fixtures\ArcPrototype\"
 
 // Values:
 let absoluteDirectoryPaths = FileSystem.parseARCFileSystem arcDir
@@ -48,6 +49,31 @@ let investigationMetadata =
     absoluteDirectoryPaths
     |> Investigation.parseMetadataSheetsFromTokens() arcDir 
     |> List.concat 
+
+#r "nuget: Xunit"
+open Xunit
+
+investigationMetadata 
+|> List.exists (
+    fun ip -> 
+        Param.getCvAccession ip = "INVMSO:00000009" && 
+        Param.getValueAsString ip |> String.isNullOrWhiteSpace |> not && 
+        match Param.getParamValue ip with | CvValue x -> x.Accession = "AGMO:00000001" | _ -> false
+)
+investigationMetadata |> List.filter (fun ip -> Param.getValueAsString ip |> String.isNullOrWhiteSpace |> not && Param.getCvAccession ip = "INVMSO:00000009")
+
+
+
+let expectedTitleCvPExists =
+    investigationMetadata 
+    |> List.exists (
+        fun ip -> 
+            Param.getCvAccession ip = "INVMSO:00000009" && 
+            Param.getValueAsString ip |> String.isNullOrWhiteSpace |> not && 
+            match Param.getParamValue ip with | CvValue x -> x.Accession = "AGMO:00000001" | _ -> false
+    )
+
+Assert.True expectedTitleCvPExists
 
 
 // Validation Cases:

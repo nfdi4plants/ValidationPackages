@@ -9,7 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{55422101-E1F
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		global.json = global.json
+		integrationTests_script.fsx = integrationTests_script.fsx
 		LICENSE = LICENSE
+		playground.fsx = playground.fsx
 		README.md = README.md
 	EndProjectSection
 EndProject
