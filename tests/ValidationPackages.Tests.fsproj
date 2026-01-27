@@ -22,8 +22,11 @@
     <Compile Include="pride%401.0.3.fs" />
     <Compile Include="pride%401.0.4.fs" />
     <Compile Include="pride%401.0.5.fs" />
+    <Compile Include="ena%401.0.0.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="ARCExpect" Version="4.0.1" />
