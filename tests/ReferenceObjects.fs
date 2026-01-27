@@ -322,3 +322,16 @@ module pride =
 
             let validationResultNonCritical =
                 ValidationResult.create(0,0,0,0)
+
+
+module ena =
+
+    module ``1_0_0`` =
+
+        module testARC_enaComplete =
+
+            let validationResultCritical =
+                ValidationResult.create(13,13,0,0)
+
+            let validationResultNonCritical =
+                ValidationResult.create(0,0,0,0)
