@@ -1,6 +1,6 @@
 let [<Literal>]PACKAGE_METADATA = """(*
 ---
-Name: invenio
+Name: ena
 Summary: Validates if the ARC contains the necessary metadata to be publishable via ENA.
 Description: |
   Validates if the ARC contains the necessary metadata to be publishable via ENA.
