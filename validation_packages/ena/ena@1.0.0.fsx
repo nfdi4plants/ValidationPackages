@@ -36,7 +36,6 @@ open System.IO
 
 
 // Input:
-let arcDir = @"C:\Repos\nfdi4plants\arc-validation-packages\tests\fixtures\testARC_enaComplete\"
 let arcDir = Directory.GetCurrentDirectory()
 
 
@@ -84,7 +83,7 @@ let glloTerm = CvTerm.create("ENACL:1011033","geographic location (longitude)","
 
 let glloTokens =
     studyProcessGraphTokens
-    |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = gllaTerm)
+    |> List.tryFind (fun cvpList -> cvpList.Head |> Param.getValueAsTerm = glloTerm)
     |> Option.defaultValue []
 
 let pgmTerm = CvTerm.create("ENACL:1011061","plant growth medium","ENACL")
@@ -441,6 +440,29 @@ type Validate.ParamCollection with
             ErrorMessage.ofIParamCollection $"does not satisfy the requirements" paramCollection
             |> Expecto.Tests.failtestNoStackf "%s"
 
+    /// <summary>
+    /// Validates if at least one Param with the expected term as value in the given collection exists.
+    /// </summary>
+    /// <param name="expectedTerm">the term expected to occur in at least 1 Param in the given collection.</param>
+    /// <param name="paramCollection">The param collection to validate.</param>
+    static member ContainsParamWithValueTerm (expectedTerm : CvTerm) (paramCollection : #seq<#IParam>) =
+        if Seq.exists (fun p -> p |> Param.getValueAsTerm = expectedTerm) paramCollection then 
+            ()
+        else
+            expectedTerm
+            |> ErrorMessage.ofCvTerm $"value does not exist"
+            |> Expecto.Tests.failtestNoStackf "%s"
+
+
+cdTokens[1 ..]
+|> Validate.ParamCollection.AllTermsSatisfyPredicate (
+    Param.getValueAsString
+    >> fun v -> cdRegex.Match(v).Success
+)
+
+cdTokens[1 ..] |> List.map Param.getValueAsString
+cdTokens
+
 
 // Validation Cases:
 let studyCases =
@@ -448,7 +470,7 @@ let studyCases =
         // Study has plant developmental stage header in process graph
         ARCExpect.validationCase (TestID.Name "plant developmental stage header exists") {
             pdsTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm pdsTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm pdsTerm
         }
 
         // TO DO: Study has plant developmental stage with valid values in process graph. Values are valid when they are part of the PO entology and child of http://purl.obolibrary.org/obo/PO_0009012
@@ -456,12 +478,13 @@ let studyCases =
         // Study has collection date header in process graph
         ARCExpect.validationCase (TestID.Name "collection date header exists") {
             cdTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm cdTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm cdTerm
         }
 
         // Study has collection date with valid values in process graph. Values are valid when they match the collection date Regex above
         ARCExpect.validationCase (TestID.Name "collection date values are valid") {
             cdTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> cdRegex.Match(v).Success
@@ -471,12 +494,13 @@ let studyCases =
         // Study has geographic location (country and/or sea) header in process graph
         ARCExpect.validationCase (TestID.Name "geographic location (country and/or sea) header exists") {
             glcaosTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm glcaosTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm glcaosTerm
         }
 
         // Study has geographic location (country and/or sea) with valid values in process graph. Values are valid when they match one of the given values above
         ARCExpect.validationCase (TestID.Name "geographic location (country and/or sea) values are valid") {
             glcaosTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> Array.contains v glcaosValues
@@ -486,12 +510,13 @@ let studyCases =
         // Study has geographic location (latitude) header in process graph
         ARCExpect.validationCase (TestID.Name "geographic location (latitude) header exists") {
             gllaTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm gllaTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm gllaTerm
         }
 
         // Study has geographic location (latitude) with valid values in process graph. Values are valid when they match the geographic location Regex for longitude and latitude above
         ARCExpect.validationCase (TestID.Name "geographic location (latitude) values are valid") {
             gllaTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> gllRegex.Match(v).Success
@@ -501,12 +526,13 @@ let studyCases =
         // Study has geographic location (longitude) header in process graph
         ARCExpect.validationCase (TestID.Name "geographic location (longitude) header exists") {
             glloTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm glloTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm glloTerm
         }
 
         // Study has geographic location (longitude) with valid values in process graph. Values are valid when they match the geographic location Regex for longitude and latitude above
         ARCExpect.validationCase (TestID.Name "geographic location (longitude) values are valid") {
             glloTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> fun v -> gllRegex.Match(v).Success
@@ -516,12 +542,13 @@ let studyCases =
         // Study has plant growth medium header in process graph
         ARCExpect.validationCase (TestID.Name "plant growth medium header exists") {
             pgmTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm pgmTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm pgmTerm
         }
 
         // Study has plant growth medium with not-empty values in process graph
         ARCExpect.validationCase (TestID.Name "plant growth medium values are not empty") {
             pgmTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> System.String.IsNullOrEmpty
@@ -532,12 +559,13 @@ let studyCases =
         // Study has isolation and growth condition header in process graph
         ARCExpect.validationCase (TestID.Name "isolation and growth condition header exists") {
             iagcTokens
-            |> Validate.ParamCollection.ContainsParamWithTerm iagcTerm
+            |> Validate.ParamCollection.ContainsParamWithValueTerm iagcTerm
         }
 
         // Study has isolation and growth condition with not-empty values in process graph
         ARCExpect.validationCase (TestID.Name "isolation and growth condition values are not empty") {
             iagcTokens
+            |> List.skip 1
             |> Validate.ParamCollection.AllTermsSatisfyPredicate (
                 Param.getValueAsString
                 >> System.String.IsNullOrEmpty
