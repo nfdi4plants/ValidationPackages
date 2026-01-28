@@ -454,16 +454,6 @@ type Validate.ParamCollection with
             |> Expecto.Tests.failtestNoStackf "%s"
 
 
-cdTokens[1 ..]
-|> Validate.ParamCollection.AllTermsSatisfyPredicate (
-    Param.getValueAsString
-    >> fun v -> cdRegex.Match(v).Success
-)
-
-cdTokens[1 ..] |> List.map Param.getValueAsString
-cdTokens
-
-
 // Validation Cases:
 let studyCases =
     testList STDMSO.``Study Metadata``.STUDY.key.Name [
