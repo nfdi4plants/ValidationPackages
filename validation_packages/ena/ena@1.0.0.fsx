@@ -434,14 +434,11 @@ type ErrorMessage with
 type Validate.ParamCollection with
 
     static member AllTermsSatisfyPredicate (projection : #IParam -> bool) (paramCollection : #seq<#IParam>) =
-        try 
-            match Seq.forall projection paramCollection with
-            | true  -> ()
-            | false ->
-                ErrorMessage.ofIParamCollection $"does not satisfy the requirements" paramCollection
-                |> Expecto.Tests.failtestNoStackf "%s"
-        with :? System.ArgumentException ->
-            ()      // that's ok because if there are no params, the requirement is trivially satisfied
+        match Seq.forall projection paramCollection with
+        | true  -> ()
+        | false ->
+            ErrorMessage.ofIParamCollection $"does not satisfy the requirements" paramCollection
+            |> Expecto.Tests.failtestNoStackf "%s"
 
     /// <summary>
     /// Validates if at least one Param with the expected term as value in the given collection exists.
