@@ -22,7 +22,7 @@
     <Compile Include="pride%401.0.3.fs" />
     <Compile Include="pride%401.0.4.fs" />
     <Compile Include="pride%401.0.5.fs" />
-    <Compile Include="ena%401.0.0.fs" />
+    <Compile Include="ena-plant-sample%401.0.0.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

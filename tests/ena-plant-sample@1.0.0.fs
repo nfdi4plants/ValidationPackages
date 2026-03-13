@@ -1,4 +1,4 @@
-﻿module ena_1_0_0
+﻿module ena_plant_sample_1_0_0
 
 
 open ValidationPackages.Tests
@@ -36,7 +36,7 @@ type BaseTool_Fixture(scriptName : string, version : string, arcfolder : string)
 
 type testARC_enaComplete_Fixture() =
 
-    inherit BaseTool_Fixture("ena", "1.0.0", "testARC_enaComplete")
+    inherit BaseTool_Fixture("ena-plant-sample", "1.0.0", "testARC_enaComplete")
 
 
 type testARC_enaComplete() =
